@@ -2,6 +2,9 @@ from flask import request
 from flask_restful import Resource, reqparse, fields, marshal_with, abort
 from model.model import PersonModel
 
+
+from flask_jwt import jwt_required
+
 Person_args = reqparse.RequestParser()
 Person_args.add_argument("Person_id", type=int, help='Person_id is required', required=True)
 Person_args.add_argument("Person_name", type=str, help='Person_name is required', required=True)
@@ -29,9 +32,9 @@ resource_fields = {
 }
 
 
-class Person(Resource):
-
+class Person(Resource):                    # we are working with resource that's why we created class
     @marshal_with(resource_fields)
+    @jwt_required()
     def get(self, Person_id):
         result = PersonModel.query.filter_by(Person_id=Person_id).first()
         if not result:
